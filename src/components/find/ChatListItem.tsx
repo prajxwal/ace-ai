@@ -59,15 +59,17 @@ function TagChips({ tags }: { tags: string[] }) {
     const children = Array.from(el.children) as HTMLElement[];
     let count = 0;
     for (const child of children.slice(0, tags.length)) {
-      if (child.offsetLeft + child.offsetWidth - el.offsetLeft > (count === tags.length - 1 ? el.clientWidth : max)) break;
+      if (child.offsetLeft + child.offsetWidth > (count === tags.length - 1 ? el.clientWidth : max)) break;
       count++;
     }
     setVisible(Math.max(count, Math.min(1, tags.length)));
   }, [tags]);
 
   const chip = "shrink-0 rounded-[5px] border border-[#e3e3e3] bg-white px-[7px] py-[3px] text-[12px] leading-[16px] text-[#6d6d6d]";
+  // `relative` makes this box the containing block for the hidden (absolutely positioned)
+  // chips, so overflow-hidden clips them. Without it they escape the list and make the page scroll.
   return (
-    <div ref={ref} className="flex w-[300px] shrink-0 items-center gap-[5px] overflow-hidden">
+    <div ref={ref} className="relative flex w-[300px] shrink-0 items-center gap-[5px] overflow-hidden">
       {tags.map((t, i) => (
         <span key={t} className={chip} style={i >= visible ? { visibility: "hidden", position: "absolute" } : undefined}>
           {t}
