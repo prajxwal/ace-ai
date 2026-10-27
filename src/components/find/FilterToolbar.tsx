@@ -57,13 +57,15 @@ export function FilterToolbar() {
       >
         Clear filters
       </button>
+      {/* Spacer: keeps at least 28px between Clear filters and Add Inbox (the chips take the rest). */}
+      <div aria-hidden="true" className="min-w-[28px] flex-1" />
       <button
         type="button"
         data-ui-id="filters.add-inbox"
         disabled={!anyApplied}
         title={anyApplied ? "Save these filters as a custom inbox" : "Apply a filter to create an inbox"}
         onClick={() => dispatch({ type: "OPEN_DIALOG", dialog: { type: "addInbox", filters } })}
-        className="ml-auto flex h-[23px] w-[89px] shrink-0 items-center justify-center gap-[4px] rounded-[5px] bg-accent px-[6px] text-[12.5px] text-white hover:brightness-95 disabled:bg-accent-disabled disabled:hover:brightness-100"
+        className="flex h-[23px] min-w-[89px] shrink-0 items-center justify-center gap-[4px] whitespace-nowrap rounded-[5px] bg-accent px-[8px] text-[12.5px] text-white hover:brightness-95 disabled:bg-accent-disabled disabled:hover:brightness-100"
       >
         <CirclePlus size={13} strokeWidth={1.6} className="shrink-0" />
         Add Inbox
