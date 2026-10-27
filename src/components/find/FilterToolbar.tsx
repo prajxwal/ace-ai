@@ -64,7 +64,7 @@ export function FilterToolbar() {
         data-ui-id="filters.add-inbox"
         disabled={!anyApplied}
         title={anyApplied ? "Save these filters as a custom inbox" : "Apply a filter to create an inbox"}
-        onClick={() => dispatch({ type: "OPEN_DIALOG", dialog: { type: "addInbox", filters } })}
+        onClick={() => dispatch({ type: "OPEN_DIALOG", dialog: { type: "inboxSettings", filters } })}
         className="flex h-[23px] min-w-[89px] shrink-0 items-center justify-center gap-[4px] whitespace-nowrap rounded-[5px] bg-accent px-[8px] text-[12.5px] text-white hover:brightness-95 disabled:bg-accent-disabled disabled:hover:brightness-100"
       >
         <CirclePlus size={13} strokeWidth={1.6} className="shrink-0" />

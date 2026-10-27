@@ -10,24 +10,39 @@ interface DialogProps {
   uiId?: string;
   children: ReactNode;
   footer?: ReactNode;
+  width?: number;
 }
 
-/** PENDING-REFERENCE: neutral modal shell until a Zoko dialog screenshot is provided. */
-export function Dialog({ title, onClose, uiId, children, footer }: DialogProps) {
+/** Modal styled after Zoko's "Inbox setting" dialog (reference #14). */
+export function Dialog({ title, onClose, uiId, children, footer, width = 490 }: DialogProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  // Keep the latest onClose without re-running effects: callers pass a new function every render.
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
+  // Focus once on open: the first text field, otherwise the first button in the body.
+  // Running this on every render stole focus to the close button after each keystroke.
+  useEffect(() => {
+    const panel = panelRef.current;
+    const target =
+      panel?.querySelector<HTMLElement>("[data-dialog-body] input, [data-dialog-body] textarea") ??
+      panel?.querySelector<HTMLElement>("[data-dialog-body] button, [data-dialog-footer] button");
+    target?.focus();
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onCloseRef.current();
     };
     document.addEventListener("keydown", onKey);
-    panelRef.current?.querySelector<HTMLElement>("input, textarea, button")?.focus();
     return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, []);
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -38,22 +53,29 @@ export function Dialog({ title, onClose, uiId, children, footer }: DialogProps) 
         aria-modal="true"
         aria-label={title}
         data-ui-id={uiId}
-        className="w-[540px] rounded-[9px] bg-white text-[16px] shadow-[0_6px_24px_rgba(0,0,0,0.18)]"
+        style={{ width }}
+        className="max-w-[calc(100vw-32px)] rounded-[8px] bg-white px-[22px] pb-[22px] pt-[20px] text-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.18)]"
       >
-        <div className="flex items-center justify-between border-b border-line px-4 py-3">
-          <h2 className="text-[18px] font-medium">{title}</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-[16px] font-semibold">{title}</h2>
           <button
             type="button"
             aria-label="Close"
             title="Close"
             onClick={onClose}
-            className="rounded p-0.5 text-icon hover:bg-chrome hover:text-ink"
+            className="flex h-[22px] w-[22px] items-center justify-center rounded-full border border-[#e3e3e3] text-ink hover:bg-panel"
           >
-            <X size={21} />
+            <X size={12} strokeWidth={2.4} />
           </button>
         </div>
-        <div className="px-4 py-3">{children}</div>
-        {footer && <div className="flex justify-end gap-2 border-t border-line px-4 py-3">{footer}</div>}
+        <div data-dialog-body className="mt-[16px]">
+          {children}
+        </div>
+        {footer && (
+          <div data-dialog-footer className="mt-[20px] flex gap-[13px] border-t border-line pt-[22px]">
+            {footer}
+          </div>
+        )}
       </div>
     </div>,
     document.body,
@@ -70,8 +92,8 @@ export function DialogButton({
       {...props}
       className={
         variant === "primary"
-          ? "rounded-[4.5px] bg-accent px-3 py-1 text-white hover:brightness-95 disabled:bg-accent-disabled"
-          : "rounded-[4.5px] border border-line px-3 py-1 hover:bg-panel"
+          ? "h-[35px] flex-1 rounded-[5px] bg-[#c4502a] text-[16px] text-white hover:brightness-110 disabled:opacity-50 disabled:hover:brightness-100"
+          : "h-[35px] flex-1 rounded-[5px] border border-[#dedede] bg-white text-[16px] hover:bg-panel"
       }
     />
   );

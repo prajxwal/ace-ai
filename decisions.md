@@ -228,3 +228,13 @@ src/
 | 14.3 | Message box: an orange-bordered box with a grey top bar showing "24 hour Customer service window expired. What is this?" when the window has expired, then a note icon, "Type something...", and an emoji icon. Typing and Enter add a simulated message only. | Reference #9. |
 | 14.4 | Profile panel: initials avatar, name, edit (Coming soon), phone with copy and call, country and local time, and **collapsible TAGS / MEDIA / ORDERS sections**. **"ADD TAG" only shows "Coming soon"; no tag feature was added**, as the user asked. | User direction: "just make it look like this". |
 | 14.5 | The signed-in agent is now **"Prajwal"** (as in the screenshots). Six My Chats rows from #4/#9 are reproduced (Prajwal J, Harshit Anand - TRACE, +19295977620, Nikita Bansal - Yaahvi, LightsnLamp, Peki - HomeNeeds). Today's times on this page use 12-hour format ("6:08 PM"), as in the reference. | References #4 and #9. |
+
+## 15. Custom inboxes (references #13–#16, added 2026-10-27)
+
+| # | Decision | Why |
+|---|----------|-----|
+| 15.1 | **Bug fix:** the dialog re-ran its focus effect on every render, because `onClose` was a new function each time. So each keystroke moved focus back to the first focusable element, the × button. Focus now runs once on open and targets the first text field. Esc reads the latest `onClose` through a ref. | Reported by the user (#13). |
+| 15.2 | The dialog is now Zoko's **"Inbox setting"** design: a bold title, a circled ×, "Inbox name", **visibility radios** (Only Me / All Agents / Selected Agents, where the last shows agent toggles), a divider, then equal-width Cancel and dark-orange Save. The shared `Dialog` uses this style everywhere. | Reference #14. |
+| 15.3 | Saving a new inbox **opens it at `/inbox/[id]`**. The page reuses the My Chats layout (`ChatInboxView`) without the profile or "Start New Chat", and shows compact counts (All / orange Unread badge / Unreplied). | Reference #15. |
+| 15.4 | Sidebar: saved inboxes appear **above** the "MY CUSTOM INBOXES" heading, with a drag handle (look only, no reordering), an inbox icon, the name and an unread badge. On hover, a ⋮ menu offers **Edit** (reopens the dialog), **Duplicate** ("Name (copy)") and **Delete** (red; leaves the page if it was open). | References #15, #16. |
+| 15.5 | Inboxes are kept in memory: they reset on reload, and an unknown `/inbox/[id]` shows "Inbox not found" with a link back. | Phase 1 has no backend. |

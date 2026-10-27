@@ -84,10 +84,15 @@ export type FilterId =
 /** Selected option values per filter. Single-select filters hold at most one value. */
 export type FilterState = Partial<Record<FilterId, string[]>>;
 
+export type InboxVisibility = "me" | "all" | "selected";
+
 export interface CustomInbox {
   id: string;
   name: string;
   filters: FilterState;
+  visibility: InboxVisibility;
+  /** Agents who can see the inbox when visibility is "selected". */
+  agentIds: string[];
 }
 
 export interface Workspace {

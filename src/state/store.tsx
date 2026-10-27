@@ -6,6 +6,7 @@ import type {
   ContentTab,
   Conversation,
   CustomInbox,
+  InboxVisibility,
   FilterId,
   FilterState,
   SidebarScope,
@@ -21,7 +22,8 @@ import { CURRENT_AGENT_ID, WORKSPACES } from "@/mock/catalog";
 
 export type DialogState =
   | null
-  | { type: "addInbox"; filters: FilterState }
+  /** Create (no inboxId) or edit a custom inbox. New inboxes save the filters passed in. */
+  | { type: "inboxSettings"; inboxId?: string; filters: FilterState }
   | { type: "newChat" }
   | { type: "notice"; title: string; body: string };
 
@@ -37,7 +39,6 @@ export interface AppState {
   dataset: DatasetName;
   conversations: Conversation[];
   scope: SidebarScope;
-  activeInboxId: string | null;
   customInboxes: CustomInbox[];
   channelTab: ChannelTabId;
   query: string;
@@ -55,8 +56,17 @@ export interface AppState {
 
 export type Action =
   | { type: "SET_SCOPE"; scope: SidebarScope }
-  | { type: "OPEN_INBOX"; inboxId: string }
-  | { type: "SAVE_INBOX"; name: string; filters: FilterState }
+  | {
+      type: "SAVE_INBOX";
+      /** Updates the inbox with this id, or creates it (see nextInboxId). */
+      inboxId: string;
+      name: string;
+      visibility: InboxVisibility;
+      agentIds: string[];
+      filters: FilterState;
+    }
+  | { type: "DUPLICATE_INBOX"; inboxId: string }
+  | { type: "DELETE_INBOX"; inboxId: string }
   | { type: "SET_CHANNEL_TAB"; tab: ChannelTabId }
   | { type: "SET_QUERY"; query: string }
   | { type: "SET_CONTENT_TAB"; tab: ContentTab }
@@ -83,7 +93,6 @@ export function createInitialState(dataset: DatasetName): AppState {
     dataset,
     conversations: getDataset(dataset),
     scope: "all",
-    activeInboxId: null,
     customInboxes: [],
     channelTab: "all",
     query: "",
@@ -98,6 +107,11 @@ export function createInitialState(dataset: DatasetName): AppState {
     helpOpen: false,
     helpDismissed: false,
   };
+}
+
+export function nextInboxId(inboxes: CustomInbox[]): string {
+  const max = inboxes.reduce((n, i) => Math.max(n, Number(i.id.replace("inbox-", "")) || 0), 0);
+  return `inbox-${max + 1}`;
 }
 
 function updateChats(
@@ -128,20 +142,30 @@ function applyBulk(c: Conversation, op: BulkOperation): Conversation {
 export function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
     case "SET_SCOPE":
-      return { ...state, scope: action.scope, activeInboxId: null, checkedChatIds: [] };
-    case "OPEN_INBOX": {
-      const inbox = state.customInboxes.find((i) => i.id === action.inboxId);
-      if (!inbox) return state;
-      return { ...state, scope: "all", activeInboxId: inbox.id, filters: inbox.filters, checkedChatIds: [] };
-    }
+      return { ...state, scope: action.scope, checkedChatIds: [] };
     case "SAVE_INBOX": {
-      const inbox: CustomInbox = {
-        id: `inbox-${state.customInboxes.length + 1}`,
-        name: action.name,
-        filters: action.filters,
-      };
+      const { inboxId, name, visibility, agentIds, filters } = action;
+      if (state.customInboxes.some((i) => i.id === inboxId)) {
+        return {
+          ...state,
+          dialog: null,
+          customInboxes: state.customInboxes.map((i) => (i.id === inboxId ? { ...i, name, visibility, agentIds } : i)),
+        };
+      }
+      const inbox: CustomInbox = { id: inboxId, name, visibility, agentIds, filters };
       return { ...state, customInboxes: [...state.customInboxes, inbox], dialog: null };
     }
+    case "DUPLICATE_INBOX": {
+      const index = state.customInboxes.findIndex((i) => i.id === action.inboxId);
+      if (index < 0) return state;
+      const original = state.customInboxes[index];
+      const copy: CustomInbox = { ...original, id: nextInboxId(state.customInboxes), name: `${original.name} (copy)` };
+      const customInboxes = [...state.customInboxes];
+      customInboxes.splice(index + 1, 0, copy);
+      return { ...state, customInboxes };
+    }
+    case "DELETE_INBOX":
+      return { ...state, customInboxes: state.customInboxes.filter((i) => i.id !== action.inboxId) };
     case "SET_CHANNEL_TAB":
       return { ...state, channelTab: action.tab, checkedChatIds: [] };
     case "SET_QUERY":
@@ -151,7 +175,7 @@ export function reducer(state: AppState, action: Action): AppState {
     case "SET_FILTER":
       return { ...state, filters: { ...state.filters, [action.filterId]: action.values } };
     case "CLEAR_FILTERS":
-      return { ...state, filters: {}, activeInboxId: null };
+      return { ...state, filters: {} };
     case "OPEN_CHAT":
       return {
         ...state,

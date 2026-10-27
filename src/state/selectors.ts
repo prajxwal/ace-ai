@@ -20,7 +20,7 @@ function inScope(chat: Conversation, scope: SidebarScope): boolean {
   }
 }
 
-function matchesFilters(chat: Conversation, filters: FilterState): boolean {
+export function matchesFilters(chat: Conversation, filters: FilterState): boolean {
   return FILTERS.every((f) => {
     const selected = filters[f.id];
     return !selected || selected.length === 0 || f.matches(chat, selected);

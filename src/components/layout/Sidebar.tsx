@@ -17,8 +17,9 @@ import {
 } from "@/components/icons";
 import { Popover } from "@/components/ui/Popover";
 import { useAppDispatch, useAppState } from "@/state/store";
-import { selectSidebarCounts } from "@/state/selectors";
+import { matchesFilters, selectSidebarCounts } from "@/state/selectors";
 import type { SidebarScope } from "@/types";
+import { CustomInboxItem } from "./CustomInboxItem";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 
 type NavItem = { label: string; icon: React.ReactNode; uiId: string } & (
@@ -158,7 +159,7 @@ export function Sidebar() {
           {NAV.map((item) => {
             const active = item.href
               ? pathname === item.href
-              : pathname === "/find" && state.scope === item.scope && state.activeInboxId === null;
+              : pathname === "/find" && state.scope === item.scope;
             const content = (
               <>
                 <span className="flex w-[17px] shrink-0 justify-center">{item.icon}</span>
@@ -201,15 +202,29 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* My custom inboxes */}
+      {/* My custom inboxes: saved inboxes sit above the heading, as in reference #15. */}
       {!collapsed && (
         <div className="px-[19px]" data-ui-id="sidebar.custom-inboxes">
+          {inboxesOpen && state.customInboxes.length > 0 && (
+            <div className="mt-[17px] flex flex-col gap-[4px]">
+              {state.customInboxes.map((inbox) => (
+                <CustomInboxItem
+                  key={inbox.id}
+                  inbox={inbox}
+                  active={pathname === `/inbox/${inbox.id}`}
+                  unread={state.conversations.filter((c) => c.unreadCount > 0 && matchesFilters(c, inbox.filters)).length}
+                />
+              ))}
+            </div>
+          )}
           <button
             type="button"
             aria-expanded={inboxesOpen}
             data-ui-id="sidebar.custom-inboxes.toggle"
             onClick={() => setInboxesOpen(!inboxesOpen)}
-            className="flex h-[60px] w-full items-center justify-between pl-[8px] pr-[2px] text-[12px] font-semibold"
+            className={`flex w-full items-center justify-between pl-[8px] pr-[2px] text-[12px] font-semibold ${
+              inboxesOpen && state.customInboxes.length > 0 ? "h-[34px]" : "h-[60px]"
+            }`}
           >
             MY CUSTOM INBOXES
             <ChevronUp size={15} className={`text-[#555] ${inboxesOpen ? "" : "rotate-180"}`} />
@@ -217,28 +232,12 @@ export function Sidebar() {
           {inboxesOpen && (
             <>
               <div className="h-px bg-card-line" />
-              {state.customInboxes.map((inbox) => (
-                <button
-                  key={inbox.id}
-                  type="button"
-                  data-ui-id={`sidebar.custom-inbox.${inbox.id}`}
-                  onClick={() => {
-                    dispatch({ type: "OPEN_INBOX", inboxId: inbox.id });
-                    if (pathname !== "/find") router.push("/find");
-                  }}
-                  className={`mt-[4px] flex h-[31.5px] w-full items-center truncate rounded-[7px] px-[8px] text-left text-[16px] ${
-                    state.activeInboxId === inbox.id ? "bg-white" : "hover:bg-white/50"
-                  }`}
-                >
-                  {inbox.name}
-                </button>
-              ))}
               <button
                 type="button"
                 aria-label="Add custom inbox"
                 title="Add custom inbox"
                 data-ui-id="sidebar.custom-inboxes.add"
-                onClick={() => dispatch({ type: "OPEN_DIALOG", dialog: { type: "addInbox", filters: state.filters } })}
+                onClick={() => dispatch({ type: "OPEN_DIALOG", dialog: { type: "inboxSettings", filters: state.filters } })}
                 className="mt-[9px] flex h-[18px] w-[18px] items-center justify-center rounded-full bg-card-line text-[#555] hover:bg-card"
               >
                 <Plus size={12} strokeWidth={2.2} />
