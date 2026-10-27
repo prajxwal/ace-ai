@@ -19,8 +19,6 @@ export interface FilterConfig {
   kind: "single" | "multi";
   options: FilterOption[];
   searchable?: boolean;
-  /** Extra left padding seen on the "Message Date" chip in the reference. */
-  indent?: boolean;
   matches: (chat: Conversation, selected: string[]) => boolean;
 }
 
@@ -119,7 +117,6 @@ export const FILTERS: FilterConfig[] = [
     id: "messageDate",
     label: "Message Date",
     kind: "single",
-    indent: true,
     options: [
       { value: "0", label: "Today" },
       { value: "1", label: "Yesterday" },

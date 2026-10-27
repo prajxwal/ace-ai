@@ -49,24 +49,22 @@ export function FilterDropdown({ config, selected, onChange }: FilterDropdownPro
         aria-expanded={open}
         data-ui-id={`filter.${config.id}`}
         onClick={() => setOpen(!open)}
-        className={`flex h-[26.5px] shrink-0 items-center whitespace-nowrap rounded-[4.5px] border bg-white pr-[10.5px] text-[16px] leading-none ${
-          config.indent ? "ml-[4.5px] pl-[13.5px]" : "pl-[9px]"
-        } ${
+        className={`flex h-[23px] shrink-0 items-center whitespace-nowrap rounded-[5px] border bg-white pl-[8px] pr-[7px] text-[14px] leading-none ${
           applied || open
-            ? "border-accent shadow-[0_0_0_3px_var(--color-accent-faint)]"
+            ? "border-accent shadow-[0_0_0_2px_var(--color-accent-faint)]"
             : "border-line hover:border-[#cfcfcf]"
         }`}
       >
         {label}
         {config.kind === "multi" && applied && (
-          <span className="ml-[9px] flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-accent px-[4px] text-[12px] font-medium text-white">
+          <span className="ml-[6px] flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-accent px-[4px] text-[11px] font-medium text-white">
             {selected.length}
           </span>
         )}
         <ChevronDown
-          size={15}
+          size={13}
           strokeWidth={2}
-          className={`${config.kind === "multi" && applied ? "ml-[6px]" : "ml-[9px]"} ${applied || open ? "text-accent" : ""}`}
+          className={`${config.kind === "multi" && applied ? "ml-[4px]" : "ml-[6px]"} ${applied || open ? "text-accent" : ""}`}
         />
       </button>
 
