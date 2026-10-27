@@ -218,3 +218,13 @@ src/
 | 3 | 2026-10-27 | `/find` (Mac), chat list with Mansour - Dripple open | `reference/03-mac-find-chat-open.png` |
 | 4 | 2026-10-27 | `/my-chats` (Mac), nothing selected | `reference/04-mac-my-chats.png` |
 | 5–8 | 2026-10-27 | `/all-features` (Mac), scrolled top to bottom | `reference/05…08-mac-all-features-*.png` |
+
+## 14. My Chats: open conversation (reference #9, added 2026-10-27)
+
+| # | Decision | Why |
+|---|----------|-----|
+| 14.1 | Opening a chat on `/my-chats` shows three columns: the chat list, the conversation, and a **collapsible Profile / Catalog panel** (toggled by the `>` handle on its edge). The selected list row gets a peach background, an orange left edge and a green WhatsApp icon. | Reference #9. |
+| 14.2 | Conversation header: contact name, assignee dropdown (reassigns locally), call (Coming soon), close chat, and more (Coming soon). Messages support **private notes** (yellow, "Private note added by … / Only Visible for agents"), **image messages** (a mock "Thanks for booking Zoko Demo!" banner) and "Sent via System/API". Links and emails are shown in orange. | Reference #9. |
+| 14.3 | Message box: an orange-bordered box with a grey top bar showing "24 hour Customer service window expired. What is this?" when the window has expired, then a note icon, "Type something...", and an emoji icon. Typing and Enter add a simulated message only. | Reference #9. |
+| 14.4 | Profile panel: initials avatar, name, edit (Coming soon), phone with copy and call, country and local time, and **collapsible TAGS / MEDIA / ORDERS sections**. **"ADD TAG" only shows "Coming soon"; no tag feature was added**, as the user asked. | User direction: "just make it look like this". |
+| 14.5 | The signed-in agent is now **"Prajwal"** (as in the screenshots). Six My Chats rows from #4/#9 are reproduced (Prajwal J, Harshit Anand - TRACE, +19295977620, Nikita Bansal - Yaahvi, LightsnLamp, Peki - HomeNeeds). Today's times on this page use 12-hour format ("6:08 PM"), as in the reference. | References #4 and #9. |
