@@ -1,6 +1,6 @@
 "use client";
 
-import { WhatsappIcon, PickUpIcon } from "@/components/icons";
+import { PickUpIcon, WhatsappLogo } from "@/components/icons";
 import { CURRENT_AGENT_ID } from "@/mock/catalog";
 import { useAppDispatch } from "@/state/store";
 import { windowExpired } from "@/lib/chat";
@@ -19,10 +19,11 @@ export function ConversationFooter({ chat }: { chat: Conversation }) {
   return (
     <div className="shrink-0 px-[17px] pb-[18px] pt-[6px]">
       {expired && (
-        <div className="mb-[8px] flex h-[50px] items-center gap-[10px] rounded-[7px] border border-[#9fdcbf] bg-[#dcefe4] px-[12px] text-[16px] font-semibold">
-          <span className="flex h-[24px] w-[24px] items-center justify-center rounded-full bg-[#48c54d] text-white">
-            <WhatsappIcon size={18} />
-          </span>
+        <div
+          data-ui-id="conversation.window-expired"
+          className="mb-[8px] flex h-[50px] items-center gap-[9px] whitespace-nowrap rounded-[6px] border border-[#8abea8] bg-[#d9e8e1] px-[12px] text-[16px] font-semibold"
+        >
+          <WhatsappLogo size={23} />
           Customer service window expired
         </div>
       )}
