@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens sampled from the reference screenshots (see decisions.md §3).
+ * Sizes in components are reference pixels / 1.25 (125% Windows scaling).
+ */
+@theme {
+  --color-accent: #ff6937;
+  --color-accent-soft: #fabda5;
+  --color-accent-faint: #ffe7df;
+  --color-accent-disabled: #f7dfd7;
+  --color-chrome: #e8e8e8;
+  --color-card: #dcdcdc;
+  --color-card-line: #e2e2e2;
+  --color-panel: #f5f5f5;
+  --color-line: #e8e8e8;
+  --color-ink: #000000;
+  --color-muted: #757575;
+  --color-tab: #666666;
+  --color-faint: #afafaf;
+  --color-icon: #7f7f7f;
+  --color-separator: #cbcbcb;
+  --color-online: #16a34a;
+}
+
+/* inline: resolve --font-inter where it is used (next/font sets it on <html>). */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  /* Inter at its default optical size, matching the Mac reference. */
+  font-variation-settings: normal;
+}
+
+/* Horizontal scrollers (tabs, filter chips) hide their scrollbar; arrows drive them. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
